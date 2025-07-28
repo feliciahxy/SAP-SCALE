@@ -1,0 +1,567 @@
+<mvc:View
+    controllerName="skylink.controller.Dashboard"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:vbm="sap.ui.vbm"
+    xmlns:microchart="sap.suite.ui.microchart"
+    displayBlock="true">
+    
+    <Page title="SkyLink Aviation Dashboard" showHeader="true">
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Title text="SkyLink Aviation Dashboard" level="H2"/>
+                </contentLeft>
+                <contentRight>
+                    <Button icon="sap-icon://ai" text="Ask Joule" type="Emphasized" press="onOpenJoule"/>
+                    <Button icon="sap-icon://refresh" press="onRefresh"/>
+                </contentRight>
+            </Bar>
+        </customHeader>
+        
+        <content>
+            <VBox class="sapUiMediumMargin">
+                <!-- KPI Header Container -->
+                <HeaderContainer 
+                    id="kpiHeaderContainer"
+                    showDividers="true"
+                    orientation="Horizontal"
+                    backgroundDesign="Solid"
+                    class="sapUiMediumMarginBottom">
+                    
+                    <!-- On-Time Performance KPI -->
+                    <GenericTile
+                        id="onTimeTile"
+                        class="sapUiTinyMargin"
+                        header="On-Time Performance"
+                        subheader="Current vs Target (90%)"
+                        frameType="OneByOne"
+                        state="Failed"
+                        press="onKPIPress">
+                        <tileContent>
+                            <TileContent>
+                                <content>
+                                    <NumericContent 
+                                        value="{/kpis/onTimePerformance/value}"
+                                        valueColor="Error"
+                                        indicator="Down"
+                                        size="M"
+                                        nullifyValue="false"/>
+                                </content>
+                            </TileContent>
+                        </tileContent>
+                    </GenericTile>
+                    
+                    <!-- Fleet Utilization KPI -->
+                    <GenericTile
+                        id="utilizationTile"
+                        class="sapUiTinyMargin"
+                        header="Fleet Utilization"
+                        subheader="Current vs Target (75%)"
+                        frameType="OneByOne"
+                        state="Loaded"
+                        press="onKPIPress">
+                        <tileContent>
+                            <TileContent>
+                                <content>
+                                    <NumericContent 
+                                        value="{/kpis/fleetUtilization/value}"
+                                        valueColor="Good"
+                                        indicator="Up"
+                                        size="M"
+                                        nullifyValue="false"/>
+                                </content>
+                            </TileContent>
+                        </tileContent>
+                    </GenericTile>
+                    
+                    <!-- Daily Revenue KPI -->
+                    <GenericTile
+                        id="revenueTile"
+                        class="sapUiTinyMargin"
+                        header="Daily Revenue"
+                        subheader="Actual vs Target"
+                        frameType="OneByOne"
+                        state="Loaded"
+                        press="onKPIPress">
+                        <tileContent>
+                            <TileContent>
+                                <content>
+                                    <NumericContent 
+                                        value="{
+                                            path: '/kpis/revenue/value',
+                                            formatter: '.formatCurrencyShort'
+                                        }"
+                                        valueColor="Good"
+                                        indicator="Up"
+                                        size="M"
+                                        nullifyValue="false"/>
+                                </content>
+                            </TileContent>
+                        </tileContent>
+                    </GenericTile>
+                    
+                    <!-- Active Alerts KPI -->
+                    <GenericTile
+                        id="alertsTile"
+                        class="sapUiTinyMargin"
+                        header="Active Alerts"
+                        subheader="Critical + Warning"
+                        frameType="OneByOne"
+                        state="Failed"
+                        press="onKPIPress">
+                        <tileContent>
+                            <TileContent>
+                                <content>
+                                    <NumericContent 
+                                        value="5"
+                                        valueColor="Error"
+                                        size="M"
+                                        nullifyValue="false"/>
+                                </content>
+                            </TileContent>
+                        </tileContent>
+                    </GenericTile>
+                    
+                    <!-- Aircraft in Service KPI -->
+                    <GenericTile
+                        id="aircraftTile"
+                        class="sapUiTinyMargin"
+                        header="Aircraft in Service"
+                        subheader="Active Fleet Status"
+                        frameType="OneByOne"
+                        state="Loaded"
+                        press="onKPIPress">
+                        <tileContent>
+                            <TileContent>
+                                <content>
+                                    <NumericContent 
+                                        value="6"
+                                        valueColor="Neutral"
+                                        size="M"
+                                        nullifyValue="false"/>
+                                </content>
+                            </TileContent>
+                        </tileContent>
+                    </GenericTile>
+                    
+                </HeaderContainer>
+                
+                <!-- Flight Operations -->
+                <Panel headerText="Flight Operations" class="sapUiResponsiveMargin">
+                    <content>
+                        <Table id="flightTable" items="{/flights}">
+                            <headerToolbar>
+                                <Toolbar>
+                                    <SearchField width="300px" search="onSearchFlights"/>
+                                    <ToolbarSpacer/>
+                                    <Text text="4 flights"/>
+                                </Toolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column><Text text="Flight"/></Column>
+                                <Column><Text text="Route"/></Column>
+                                <Column><Text text="Status"/></Column>
+                                <Column><Text text="Gate"/></Column>
+                                <Column><Text text="Passengers"/></Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem press="onFlightPress">
+                                    <cells>
+                                        <ObjectIdentifier title="{flightNumber}"/>
+                                        <Text text="{origin} → {destination}"/>
+                                        <ObjectStatus text="{status}" state="{
+                                            path: 'status',
+                                            formatter: '.formatFlightStatus'
+                                        }"/>
+                                        <Text text="{gate}"/>
+                                        <Text text="{passengerCount}"/>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </content>
+                </Panel>
+                
+                <!-- Flight Demand by Country/Region - AnalyticMap -->
+                <Panel headerText="Flight Demand by Country/Region" class="sapUiResponsiveMargin" height="500px">
+                    <content>
+                        <vbm:AnalyticMap
+                            id="demandAnalyticMap"
+                            initialPosition="0;20;0"
+                            initialZoom="2"
+                            width="100%"
+                            height="450px">
+                            
+                            <!-- Regions aggregation for country-based demand -->
+                            <vbm:regions>
+                                <vbm:Region 
+                                    code="US"
+                                    color="rgba(220,38,38,0.8)"
+                                    tooltip="United States: 91% flight demand increase">
+                                </vbm:Region>
+                                <vbm:Region 
+                                    code="JP"
+                                    color="rgba(220,38,38,0.8)"
+                                    tooltip="Japan: 96% flight demand increase">
+                                </vbm:Region>
+                                <vbm:Region 
+                                    code="SG"
+                                    color="rgba(220,38,38,0.8)"
+                                    tooltip="Singapore: 93% flight demand increase">
+                                </vbm:Region>
+                                <vbm:Region 
+                                    code="GB"
+                                    color="rgba(245,158,11,0.8)"
+                                    tooltip="United Kingdom: 88% flight demand increase">
+                                </vbm:Region>
+                                <vbm:Region 
+                                    code="DE"
+                                    color="rgba(245,158,11,0.8)"
+                                    tooltip="Germany: 86% flight demand increase">
+                                </vbm:Region>
+                                <vbm:Region 
+                                    code="FR"
+                                    color="rgba(245,158,11,0.8)"
+                                    tooltip="France: 85% flight demand increase">
+                                </vbm:Region>
+                                <vbm:Region 
+                                    code="AE"
+                                    color="rgba(220,38,38,0.8)"
+                                    tooltip="UAE: 92% flight demand increase">
+                                </vbm:Region>
+                                <vbm:Region 
+                                    code="NL"
+                                    color="rgba(34,197,94,0.8)"
+                                    tooltip="Netherlands: 82% flight demand increase">
+                                </vbm:Region>
+                                <vbm:Region 
+                                    code="ES"
+                                    color="rgba(59,130,246,0.6)"
+                                    tooltip="Spain: 79% flight demand increase">
+                                </vbm:Region>
+                                <vbm:Region 
+                                    code="KR"
+                                    color="rgba(245,158,11,0.8)"
+                                    tooltip="South Korea: 88% flight demand increase">
+                                </vbm:Region>
+                                <vbm:Region 
+                                    code="AU"
+                                    color="rgba(34,197,94,0.8)"
+                                    tooltip="Australia: 81% flight demand increase">
+                                </vbm:Region>
+                                <vbm:Region 
+                                    code="TR"
+                                    color="rgba(34,197,94,0.8)"
+                                    tooltip="Turkey: 84% flight demand increase">
+                                </vbm:Region>
+                                <vbm:Region 
+                                    code="QA"
+                                    color="rgba(245,158,11,0.8)"
+                                    tooltip="Qatar: 87% flight demand increase">
+                                </vbm:Region>
+                                <vbm:Region 
+                                    code="IN"
+                                    color="rgba(245,158,11,0.8)"
+                                    tooltip="India: 89% flight demand increase">
+                                </vbm:Region>
+                                <vbm:Region 
+                                    code="BR"
+                                    color="rgba(245,158,11,0.8)"
+                                    tooltip="Brazil: 86% flight demand increase">
+                                </vbm:Region>
+                                <vbm:Region 
+                                    code="HK"
+                                    color="rgba(220,38,38,0.8)"
+                                    tooltip="Hong Kong: 90% flight demand increase">
+                                </vbm:Region>
+                                <vbm:Region 
+                                    code="CA"
+                                    color="rgba(34,197,94,0.8)"
+                                    tooltip="Canada: 83% flight demand increase">
+                                </vbm:Region>
+                                <vbm:Region 
+                                    code="CN"
+                                    color="rgba(245,158,11,0.8)"
+                                    tooltip="China: 87% flight demand increase">
+                                </vbm:Region>
+                            </vbm:regions>
+                            
+                            <!-- Legend for the map -->
+                            <vbm:legend>
+                                <vbm:Legend caption="Flight Demand Levels">
+                                    <vbm:items>
+                                        <vbm:LegendItem text="Critical (90%+)" color="rgba(220,38,38,0.8)"/>
+                                        <vbm:LegendItem text="High (85-89%)" color="rgba(245,158,11,0.8)"/>
+                                        <vbm:LegendItem text="Elevated (80-84%)" color="rgba(34,197,94,0.8)"/>
+                                        <vbm:LegendItem text="Normal (&lt;80%)" color="rgba(59,130,246,0.8)"/>
+                                    </vbm:items>
+                                </vbm:Legend>
+                            </vbm:legend>
+                            
+                        </vbm:AnalyticMap>
+                    </content>
+                </Panel>
+                
+                <!-- Country Demand Summary Table -->
+                <Panel headerText="Flight Demand by Country" class="sapUiResponsiveMargin">
+                    <content>
+                        <Table items="{/countryDemand}" class="sapUiMediumMargin">
+                            <headerToolbar>
+                                <Toolbar>
+                                    <Title text="Country Flight Demand Summary"/>
+                                    <ToolbarSpacer/>
+                                    <Text text="{= ${/countryDemand}.length } countries"/>
+                                </Toolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column><Text text="Country"/></Column>
+                                <Column><Text text="ISO Code"/></Column>
+                                <Column><Text text="Demand Level"/></Column>
+                                <Column><Text text="Status"/></Column>
+                                <Column><Text text="Major Airports"/></Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <ObjectIdentifier title="{country}"/>
+                                        <Text text="{countryCode}"/>
+                                        <ProgressIndicator 
+                                            percentValue="{demandLevel}" 
+                                            showValue="true"
+                                            state="{
+                                                path: 'demandLevel',
+                                                formatter: '.formatDemandState'
+                                            }"/>
+                                        <ObjectStatus 
+                                            text="{
+                                                path: 'demandLevel',
+                                                formatter: '.formatDemandStatusText'
+                                            }"
+                                            state="{
+                                                path: 'demandLevel',
+                                                formatter: '.formatDemandState'
+                                            }"/>
+                                        <Text text="{majorAirports}"/>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </content>
+                </Panel>
+                
+                <!-- Forecast vs Actual Load Factor Analysis -->
+                <Panel headerText="Forecast vs Actual Load Factor Analysis" class="sapUiResponsiveMargin">
+                    <headerToolbar>
+                        <Toolbar>
+                            <Title text="Forecast vs Actual Load Factor Analysis"/>
+                            <ToolbarSpacer/>
+                            <SegmentedButton selectedKey="{/selectedPeriod}" selectionChange="onPeriodChange">
+                                <items>
+                                    <SegmentedButtonItem key="1D" text="1 Day"/>
+                                    <SegmentedButtonItem key="1M" text="1 Month"/>
+                                    <SegmentedButtonItem key="6M" text="6 Months"/>
+                                </items>
+                            </SegmentedButton>
+                        </Toolbar>
+                    </headerToolbar>
+                    <content>
+                        <VBox class="sapUiMediumMargin">
+                            <!-- Performance Summary Cards -->
+                            <HBox class="sapUiMediumMarginBottom">
+                                <GenericTile class="sapUiTinyMarginEnd" frameType="OneByHalf" width="200px" 
+                                    header="Forecast Accuracy" subheader="Overall Accuracy %">
+                                    <tileContent>
+                                        <TileContent>
+                                            <content>
+                                                <NumericContent 
+                                                    value="{/forecastAccuracy/accuracy}"
+                                                    valueColor="{
+                                                        path: '/forecastAccuracy/accuracy',
+                                                        formatter: '.formatAccuracyColor'
+                                                    }"
+                                                    indicator="{
+                                                        path: '/forecastAccuracy/trend',
+                                                        formatter: '.formatTrendIndicator'
+                                                    }"
+                                                    size="S"/>
+                                            </content>
+                                        </TileContent>
+                                    </tileContent>
+                                </GenericTile>
+                                
+                                <GenericTile class="sapUiTinyMarginEnd" frameType="OneByHalf" width="200px"
+                                    header="Avg Variance" subheader="Deviation %">
+                                    <tileContent>
+                                        <TileContent>
+                                            <content>
+                                                <NumericContent 
+                                                    value="{/forecastAccuracy/avgVariance}"
+                                                    valueColor="Critical"
+                                                    size="S"/>
+                                            </content>
+                                        </TileContent>
+                                    </tileContent>
+                                </GenericTile>
+                                
+                                <GenericTile frameType="OneByHalf" width="200px"
+                                    header="Best Route" subheader="Most Accurate">
+                                    <tileContent>
+                                        <TileContent>
+                                            <content>
+                                                <NumericContent 
+                                                    value="{/forecastAccuracy/bestRoute}"
+                                                    valueColor="Good"
+                                                    size="S"/>
+                                            </content>
+                                        </TileContent>
+                                    </tileContent>
+                                </GenericTile>
+                            </HBox>
+                            
+                            <!-- Interactive Bar Chart for Route Analysis -->
+                            <VBox class="sapUiNoMargin">
+                                <!-- Chart Header with Legend -->
+                                <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginBottom">
+                                    <Title text="Route Performance Comparison" level="H4"/>
+                                    <HBox alignItems="Center">
+                                        <Text text="Legend:" class="sapUiTinyMarginEnd"/>
+                                        <HBox class="sapUiTinyMarginEnd" alignItems="Center">
+                                            <core:Icon src="sap-icon://full-screen" color="#3b82f6" class="sapUiTinyMarginEnd" size="0.75rem"/>
+                                            <Text text="Forecast" class="sapUiTinyMarginEnd"/>
+                                        </HBox>
+                                        <HBox alignItems="Center">
+                                            <core:Icon src="sap-icon://full-screen" color="#22c55e" class="sapUiTinyMarginEnd" size="0.75rem"/>
+                                            <Text text="Actual"/>
+                                        </HBox>
+                                    </HBox>
+                                </HBox>
+                                
+                                <!-- Chart Container with Background -->
+                                <Panel class="sapUiNoMargin" backgroundDesign="Solid">
+                                    <content>
+                                        <ScrollContainer 
+                                            vertical="false" 
+                                            horizontal="true" 
+                                            height="420px" 
+                                            width="100%"
+                                            class="sapUiNoMargin">
+                                            <core:HTML content="{
+                                                path: '/forecastData',
+                                                formatter: '.formatVerticalBarChart'
+                                            }"/>
+                                        </ScrollContainer>
+                                    </content>
+                                </Panel>
+                            </VBox>
+                            
+                            <!-- Detailed Route Performance Table -->
+                            <Table items="{/forecastData}" class="sapUiMediumMarginTop">
+                                <headerToolbar>
+                                    <Toolbar>
+                                        <Title text="Route Performance Details - {/selectedPeriod}"/>
+                                        <ToolbarSpacer/>
+                                        <Button icon="sap-icon://download" text="Export" press="onExportForecast"/>
+                                    </Toolbar>
+                                </headerToolbar>
+                                <columns>
+                                    <Column><Text text="Route"/></Column>
+                                    <Column><Text text="Forecast %"/></Column>
+                                    <Column><Text text="Actual %"/></Column>
+                                    <Column><Text text="Variance"/></Column>
+                                    <Column><Text text="Status"/></Column>
+                                    <Column><Text text="Trend"/></Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem press="onRouteDetailsPress">
+                                        <cells>
+                                            <ObjectIdentifier title="{route}" text="{aircraft}"/>
+                                            <Text text="{
+                                                path: 'forecastValue',
+                                                formatter: '.formatPercentage'
+                                            }"/>
+                                            <Text text="{
+                                                path: 'actualValue', 
+                                                formatter: '.formatPercentage'
+                                            }"/>
+                                            <Text text="{
+                                                path: 'variance',
+                                                formatter: '.formatVarianceDisplay'
+                                            }"/>
+                                            <ObjectStatus 
+                                                text="{
+                                                    path: 'variance',
+                                                    formatter: '.formatVarianceStatus'
+                                                }"
+                                                state="{
+                                                    path: 'variance',
+                                                    formatter: '.formatVarianceState'
+                                                }"/>
+                                            <core:Icon 
+                                                src="{
+                                                    path: 'trend',
+                                                    formatter: '.formatTrendIcon'
+                                                }"
+                                                color="{
+                                                    path: 'trend',
+                                                    formatter: '.formatTrendColor'
+                                                }"/>
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </VBox>
+                    </content>
+                </Panel>
+                
+                <!-- Alerts and Maintenance -->
+                <HBox>
+                    <Panel headerText="Active Alerts" width="50%" class="sapUiMediumMarginEnd">
+                        <content>
+                            <List items="{/alerts}">
+                                <StandardListItem
+                                    title="{title}"
+                                    description="{description}"
+                                    info="{severity}"
+                                    infoState="{
+                                        path: 'severity',
+                                        formatter: '.formatAlertPriority'
+                                    }"
+                                    press="onAlertPress"/>
+                            </List>
+                        </content>
+                    </Panel>
+                    
+                    <Panel headerText="Upcoming Maintenance" width="50%">
+                        <content>
+                            <List items="{/maintenanceSchedules}">
+                                <StandardListItem
+                                    title="{aircraft/tailNumber} - {maintenanceType}"
+                                    description="{description}"
+                                    info="{
+                                        path: 'scheduledDate',
+                                        formatter: '.formatDate'
+                                    }"
+                                    icon="sap-icon://wrench"
+                                    press="onMaintenancePress"/>
+                            </List>
+                        </content>
+                    </Panel>
+                </HBox>
+                
+            </VBox>
+        </content>
+        
+        <footer>
+            <Bar>
+                <contentLeft>
+                    <Text text="Powered by SAP BTP with Joule AI"/>
+                </contentLeft>
+                <contentRight>
+                    <Text text="Last updated: {/lastUpdated}"/>
+                </contentRight>
+            </Bar>
+        </footer>
+    </Page>
+</mvc:View>

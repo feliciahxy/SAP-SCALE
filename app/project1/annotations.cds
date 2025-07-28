@@ -1,4 +1,4 @@
-using MaintenanceService as service from '../../srv/cat-service';
+using SkyLinkService as service from '../../srv/cat-service';
 annotate service.Aircraft with @(
     UI.FieldGroup #GeneratedGroup : {
         $Type : 'UI.FieldGroupType',

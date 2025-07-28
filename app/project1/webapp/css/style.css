@@ -1,0 +1,211 @@
+/* SkyLink Aviation Dashboard Custom Styles */
+
+/* General Layout */
+.sapUiContentPadding {
+    background-color: #f5f6fa;
+}
+
+/* Header Bar */
+.sapMBar {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+}
+
+.sapMBar .sapMTitle {
+    color: white !important;
+}
+
+.sapMBar .sapMText {
+    color: white !important;
+}
+
+.sapMBar .sapMBtn {
+    color: white !important;
+}
+
+/* KPI Cards */
+.sapFCard {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sapFCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.sapFCardHeader {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e1e4e8;
+}
+
+/* Object Numbers in KPIs */
+.sapMObjectNumber {
+    font-size: 2rem !important;
+}
+
+.sapMObjectNumberUnit {
+    font-size: 1.2rem !important;
+}
+
+/* Status Colors */
+.sapMObjectStatusError {
+    color: #d32f2f !important;
+}
+
+.sapMObjectStatusWarning {
+    color: #f57c00 !important;
+}
+
+.sapMObjectStatusSuccess {
+    color: #388e3c !important;
+}
+
+/* Panels */
+.sapMPanel {
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.sapMPanelHdr {
+    background-color: #fafbfc;
+    border-bottom: 1px solid #e1e4e8;
+}
+
+/* Tables */
+.sapMListTbl {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.sapMListTblHeaderRow {
+    background-color: #f6f8fa;
+}
+
+.sapMListTblRow:hover {
+    background-color: #f0f7ff;
+}
+
+/* Joule AI Dialog Styles */
+#jouleDialog .sapMDialogScroll {
+    background-color: #f8f9fa;
+}
+
+.chatMessage {
+    border-radius: 12px;
+    padding: 12px 16px;
+    max-width: 85%;
+    word-wrap: break-word;
+}
+
+.userMessage .chatMessage {
+    background-color: #0070f2;
+    color: white;
+    margin-left: auto;
+}
+
+.assistantMessage .chatMessage {
+    background-color: white;
+    border: 1px solid #e1e4e8;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.userMessage .sapMText {
+    color: white !important;
+}
+
+.assistantMessage .sapUiIcon {
+    color: #0070f2;
+}
+
+/* Joule Input */
+#jouleInput {
+    border-radius: 20px;
+    background-color: #f6f8fa;
+}
+
+#jouleInput:focus {
+    background-color: white;
+    border-color: #0070f2;
+}
+
+/* Alerts and Notifications */
+.sapMNLI {
+    border-left: 4px solid transparent;
+}
+
+.sapMNLI[data-sap-ui-priority="High"] {
+    border-left-color: #d32f2f;
+}
+
+.sapMNLI[data-sap-ui-priority="Medium"] {
+    border-left-color: #f57c00;
+}
+
+.sapMNLI[data-sap-ui-priority="Low"] {
+    border-left-color: #0070f2;
+}
+
+/* Micro Charts */
+.sapSuiteMC {
+    margin: 8px 0;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.sapFCard {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sapFCard {
+        width: 100% !important;
+        margin-bottom: 16px !important;
+    }
+    
+    .sapUiRespGridMedia-Std-Phone .sapFCard {
+        width: 100% !important;
+    }
+}
+
+/* Loading States */
+.sapMBusyIndicator {
+    color: #0070f2;
+}
+
+/* Custom Aviation Theme Colors */
+:root {
+    --skylink-primary: #1e3c72;
+    --skylink-secondary: #2a5298;
+    --skylink-accent: #0070f2;
+    --skylink-success: #4caf50;
+    --skylink-warning: #ff9800;
+    --skylink-error: #f44336;
+}
+
+/* Footer */
+.sapMPageFooter .sapMBar {
+    background: #fafbfc;
+    border-top: 1px solid #e1e4e8;
+}
+
+.sapMPageFooter .sapMText {
+    color: #586069 !important;
+}
+
+/* Quick Actions */
+.quickAction {
+    transition: all 0.2s ease;
+}
+
+.quickAction:hover {
+    background-color: rgba(0, 112, 242, 0.1);
+    border-radius: 4px;
+}
