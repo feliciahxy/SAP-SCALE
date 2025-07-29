@@ -1,0 +1,415 @@
+/* Joule AI Assistant Styles */
+
+/* Main Container */
+.jouleDialog .sapMDialog {
+    border-radius: 20px !important;
+    overflow: hidden !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+.jouleMainContainer {
+    background: white !important;
+    min-height: 650px !important;
+    max-height: 650px !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Header Section with Purple Gradient */
+.jouleHeader {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    padding: 16px 24px 32px 24px !important;
+    position: relative !important;
+    min-height: 180px !important;
+    flex-shrink: 0 !important;
+}
+
+.jouleHeaderContent {
+    color: white !important;
+    text-align: center !important;
+    margin-top: 16px !important;
+}
+
+/* Close Button */
+.jouleCloseButtonContainer {
+    margin-bottom: 8px !important;
+}
+
+.jouleCloseButton {
+    color: white !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 50% !important;
+    width: 36px !important;
+    height: 36px !important;
+}
+
+.jouleCloseButton:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Content Area */
+.jouleContentArea {
+    background: white !important;
+    padding: 24px !important;
+    margin-top: -16px !important;
+    border-radius: 16px 16px 0 0 !important;
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+/* Logo */
+.jouleLogo {
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5)) !important;
+}
+
+/* Typography */
+.jouleTitle {
+    font-size: 28px !important;
+    font-weight: 600 !important;
+    color: white !important;
+    margin-bottom: 8px !important;
+}
+
+.jouleGreeting {
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    color: white !important;
+    margin-bottom: 4px !important;
+}
+
+.jouleSubGreeting {
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    color: white !important;
+}
+
+/* Quick Actions Panel */
+.jouleQuickActionsPanel {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+}
+
+.jouleActionBtn {
+    background: white !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+    color: #374151 !important;
+}
+
+.jouleActionBtn:hover {
+    background: #f9fafb !important;
+    border-color: #9ca3af !important;
+}
+
+/* Chat Area */
+.jouleChatContainer {
+    background: white !important;
+    flex: 1 !important;
+    overflow-y: auto !important;
+    padding: 16px 24px !important;
+    margin-top: 0 !important;
+}
+
+.jouleChatContent {
+    padding: 8px 0 !important;
+}
+
+.jouleChatItem {
+    background: transparent !important;
+    margin-bottom: 8px !important;
+}
+
+.chatMessageContainer {
+    margin-bottom: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Chat Bubbles */
+.userBubble {
+    background: #6366f1 !important;
+    color: white !important;
+    border-radius: 18px 18px 4px 18px !important;
+    padding: 12px 16px !important;
+    max-width: 60% !important;
+    margin-left: auto !important;
+    margin-right: 16px !important;
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+.jouleBubble {
+    background: white !important;
+    color: #1f2937 !important;
+    border-radius: 18px 18px 18px 4px !important;
+    padding: 12px 16px !important;
+    max-width: 70% !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.bubbleText {
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+}
+
+/* Input Section - Fixed at Bottom */
+.jouleInputSection {
+    background: white !important;
+    padding: 16px 24px 24px 24px !important;
+    border-top: 1px solid #e5e7eb !important;
+    flex-shrink: 0 !important;
+}
+
+.jouleInputLabel {
+    font-size: 14px !important;
+    color: #374151 !important;
+    font-weight: 500 !important;
+}
+
+.jouleInputContainer {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+}
+
+.jouleTextInput {
+    background: #f9fafb !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 24px !important;
+    padding: 0 !important;
+}
+
+.jouleTextInput .sapMInputBase {
+    background: transparent !important;
+    border: none !important;
+}
+
+.jouleTextInput .sapMInputBaseInner {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 12px 16px !important;
+    border-radius: 24px !important;
+}
+
+/* Remove any duplicate input styling */
+.jouleDialog input[type="text"] {
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+}
+
+/* Hide any potential duplicate HTML input elements */
+.jouleDialog .jouleInputContainer input:not(.sapMInputBaseInner) {
+    display: none !important;
+}
+
+.jouleSendButton {
+    background: #6366f1 !important;
+    border: none !important;
+    border-radius: 50% !important;
+    width: 36px !important;
+    height: 36px !important;
+    margin-right: 4px !important;
+}
+
+.jouleSendButton:hover {
+    background: #4f46e5 !important;
+}
+
+/* Responsive UI Improvements */
+@media (max-width: 768px) {
+    .jouleDialog .sapMDialog {
+        width: 95% !important;
+        max-width: 400px !important;
+    }
+    
+    .jouleMainContainer {
+        min-height: 500px !important;
+        max-height: 80vh !important;
+    }
+    
+    .jouleHeader {
+        min-height: 140px !important;
+        padding: 12px 16px 24px 16px !important;
+    }
+    
+    .jouleTitle {
+        font-size: 24px !important;
+    }
+    
+    .jouleChatContainer {
+        padding: 12px 16px !important;
+    }
+    
+    .jouleInputSection {
+        padding: 12px 16px 16px 16px !important;
+    }
+    
+    .userBubble, .jouleBubble {
+        max-width: 85% !important;
+        font-size: 13px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .jouleDialog .sapMDialog {
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 0 !important;
+    }
+    
+    .jouleMainContainer {
+        height: 100vh !important;
+        max-height: 100vh !important;
+        min-height: 100vh !important;
+    }
+}
+
+/* Dashboard Layout Fixes */
+.sapUiMediumMargin {
+    margin: 1rem 0 !important;
+}
+
+/* Ensure all panels align properly */
+.sapUiResponsiveMargin {
+    margin: 1rem 0 !important;
+}
+
+/* Override specific panel margins for consistency */
+.sapUiResponsiveContentPadding {
+    padding: 1rem !important;
+}
+
+/* Center all content containers */
+.dashboardContainer {
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Ensure HeaderContainer KPI cards are aligned with content */
+.sapMHeaderContainer {
+    margin: 1rem !important;
+    padding: 0 !important;
+}
+
+/* Override margin end classes for consistency */
+.sapUiMediumMarginEnd {
+    margin-right: 1rem !important;
+    margin-left: 1rem !important;
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+}
+
+/* Fix panel content alignment */
+.sapMPanelContent {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Ensure tables and lists inside panels are properly contained */
+.sapMPanel .sapMList,
+.sapMPanel .sapMTable {
+    margin: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Fix table container alignment */
+.sapMListTblCnt {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Maintenance Timeline Styles */
+.maintenance-timeline-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: visible !important;
+    padding: 16px !important;
+    background: #f9fafb !important;
+    box-sizing: border-box !important;
+}
+
+.maintenance-timeline-cards {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 12px !important;
+    justify-content: flex-start !important;
+    margin-bottom: 20px !important;
+    min-width: fit-content !important;
+    width: auto !important;
+}
+
+.maintenance-card {
+    min-width: 140px !important;
+    max-width: 140px !important;
+    flex: 0 0 140px !important;
+    background: #f3f4f6 !important;
+    border: 2px solid #6b7280 !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    transition: transform 0.2s !important;
+    box-sizing: border-box !important;
+}
+
+.maintenance-card:hover {
+    transform: scale(1.05) !important;
+}
+
+.maintenance-card.in-progress {
+    background: #fef3c7 !important;
+    border-color: #f59e0b !important;
+}
+
+.maintenance-card.completed {
+    background: #d1fae5 !important;
+    border-color: #10b981 !important;
+}
+
+.maintenance-card.newly-scheduled {
+    background: #dcfce7 !important;
+    border-color: #22c55e !important;
+    box-shadow: 0 0 10px rgba(34, 197, 94, 0.3) !important;
+    animation: pulse-green 2s ease-in-out infinite !important;
+}
+
+.maintenance-card.empty {
+    background: #f9fafb !important;
+    border: 2px dashed #d1d5db !important;
+    opacity: 0.6 !important;
+    cursor: default !important;
+}
+
+.maintenance-card.empty:hover {
+    transform: none !important;
+}
+
+@keyframes pulse-green {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+    }
+}
+
+.maintenance-timeline-footer {
+    text-align: center !important;
+    font-size: 11px !important;
+    color: #6b7280 !important;
+    margin-top: 16px !important;
+}

@@ -1,86 +1,92 @@
 <core:FragmentDefinition
     xmlns="sap.m"
-    xmlns:core="sap.ui.core"
-    xmlns:l="sap.ui.layout">
+    xmlns:core="sap.ui.core">
     
     <Dialog
         id="jouleDialog"
-        title="Joule AI Assistant"
-        contentWidth="600px"
-        contentHeight="500px"
+        title=""
+        contentWidth="450px"
+        contentHeight="650px"
         resizable="true"
-        draggable="true">
+        draggable="true"
+        showHeader="false"
+        class="jouleDialog">
         
         <content>
-            <l:VerticalLayout width="100%" height="100%">
-                <!-- Welcome Message -->
-                <MessageStrip 
-                    text="Hi! I'm Joule, your AI aviation assistant. Ask me about flights, maintenance, or operations!"
-                    type="Information"
-                    showIcon="true"
-                    class="sapUiSmallMarginBottom"/>
+            <VBox width="100%" height="100%" class="jouleMainContainer">
                 
-                <!-- Chat Area -->
+                <!-- Purple Header with Logo and Close Button -->
+                <VBox class="jouleHeader">
+                    <!-- Close Button -->
+                    <HBox justifyContent="End" class="jouleCloseButtonContainer">
+                        <Button 
+                            icon="sap-icon://decline" 
+                            type="Transparent" 
+                            press="onCloseJoule"
+                            class="jouleCloseButton"/>
+                    </HBox>
+                    
+                    <!-- Header Content -->
+                    <VBox alignItems="Center" class="jouleHeaderContent">
+                        <core:Icon src="sap-icon://ai" size="3rem" color="white" class="sapUiMediumMarginBottom jouleLogo"/>
+                        <Title text="Joule" level="H1" textAlign="Center" class="jouleTitle"/>
+                        <Text text="Hello! I'm your AI aviation assistant." textAlign="Center" class="jouleGreeting"/>
+                        <Text text="How can I help you today?" textAlign="Center" class="jouleSubGreeting"/>
+                    </VBox>
+                </VBox>
+                
+                <!-- Chat Area (Scrollable) -->
                 <ScrollContainer
                     id="chatScrollContainer"
-                    height="350px"
                     width="100%"
                     vertical="true"
-                    class="sapUiSmallMarginBottom">
-                    <Panel class="chatPanel">
-                        <content>
-                            <List
-                                id="chatMessages"
-                                items="{joule>/messages}"
-                                showSeparators="None">
-                                <CustomListItem>
-                                    <VBox width="100%" class="chatMessage">
-                                        <HBox alignItems="Center" class="sapUiTinyMarginBottom">
-                                            <core:Icon 
-                                                src="{= ${joule>type} === 'user' ? 'sap-icon://person-placeholder' : 'sap-icon://ai' }"
-                                                size="1rem"
-                                                class="sapUiTinyMarginEnd"/>
+                    class="jouleChatContainer">
+                    <VBox class="jouleChatContent">
+                        <List
+                            id="chatMessages"
+                            items="{joule>/messages}"
+                            showSeparators="None">
+                            <CustomListItem class="jouleChatItem">
+                                <VBox width="100%" class="chatMessageContainer">
+                                    <HBox 
+                                        justifyContent="{= ${joule>type} === 'user' ? 'End' : 'Start' }"
+                                        class="sapUiTinyMarginBottom">
+                                        <VBox 
+                                            class="{= ${joule>type} === 'user' ? 'userBubble' : 'jouleBubble' }"
+                                            width="auto">
                                             <Text 
-                                                text="{= ${joule>type} === 'user' ? 'You' : 'Joule' }"
-                                                class="sapUiTinyText"/>
-                                        </HBox>
-                                        <Text 
-                                            text="{joule>text}" 
-                                            renderWhitespace="true"/>
-                                    </VBox>
-                                </CustomListItem>
-                            </List>
-                        </content>
-                    </Panel>
+                                                text="{joule>text}" 
+                                                renderWhitespace="true"
+                                                class="bubbleText"/>
+                                        </VBox>
+                                    </HBox>
+                                </VBox>
+                            </CustomListItem>
+                        </List>
+                    </VBox>
                 </ScrollContainer>
                 
-                <!-- Suggested Queries -->
-                <HBox class="sapUiTinyMarginBottom">
-                    <Text text="Try: " class="sapUiTinyMarginEnd"/>
-                    <Link text="Which flights are delayed?" press="onSuggestedQuery" class="sapUiTinyMarginEnd"/>
-                    <Link text="Show maintenance" press="onSuggestedQuery"/>
-                </HBox>
+                <!-- Fixed Input Area at Bottom -->
+                <VBox class="jouleInputSection">
+                    <Label text="Ask me anything about aviation operations:" class="jouleInputLabel sapUiSmallMarginBottom"/>
+                    <HBox width="100%" alignItems="Center" class="jouleInputContainer">
+                        <Input
+                            id="jouleInput"
+                            placeholder="Type your question here..."
+                            width="100%"
+                            submit="onJouleQuery"
+                            class="jouleTextInput sapUiSmallMarginEnd"/>
+                        <Button
+                            id="jouleSubmitButton"
+                            icon="sap-icon://paper-plane"
+                            type="Emphasized"
+                            press="onJouleQuery"
+                            class="jouleSendButton"/>
+                    </HBox>
+                </VBox>
                 
-                <!-- Input Area -->
-                <HBox width="100%">
-                    <Input
-                        id="jouleInput"
-                        placeholder="Ask me about flights, maintenance, or operations..."
-                        width="100%"
-                        submit="onJouleQuery"
-                        class="sapUiSmallMarginEnd"/>
-                    <Button
-                        id="jouleSubmitButton"
-                        icon="sap-icon://paper-plane"
-                        type="Emphasized"
-                        press="onJouleQuery"/>
-                </HBox>
-            </l:VerticalLayout>
+            </VBox>
         </content>
-        
-        <buttons>
-            <Button text="Close" press="onCloseJoule"/>
-        </buttons>
     </Dialog>
     
 </core:FragmentDefinition>

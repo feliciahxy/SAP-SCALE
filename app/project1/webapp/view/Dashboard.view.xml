@@ -7,11 +7,11 @@
     xmlns:microchart="sap.suite.ui.microchart"
     displayBlock="true">
     
-    <Page title="SkyLink Aviation Dashboard" showHeader="true">
+    <Page title="SOAR Dashboard" showHeader="true">
         <customHeader>
             <Bar>
                 <contentLeft>
-                    <Title text="SkyLink Aviation Dashboard" level="H2"/>
+                    <Title text="SOAR Dashboard" level="H2"/>
                 </contentLeft>
                 <contentRight>
                     <Button icon="sap-icon://ai" text="Ask Joule" type="Emphasized" press="onOpenJoule"/>
@@ -21,7 +21,7 @@
         </customHeader>
         
         <content>
-            <VBox class="sapUiMediumMargin">
+            <VBox class="dashboardContainer">
                 <!-- KPI Header Container -->
                 <HeaderContainer 
                     id="kpiHeaderContainer"
@@ -115,7 +115,7 @@
                             <TileContent>
                                 <content>
                                     <NumericContent 
-                                        value="5"
+                                        value="{= ${/kpis/activeAlerts/critical} + ${/kpis/activeAlerts/warning}}"
                                         valueColor="Error"
                                         size="M"
                                         nullifyValue="false"/>
@@ -137,7 +137,7 @@
                             <TileContent>
                                 <content>
                                     <NumericContent 
-                                        value="6"
+                                        value="{/kpis/aircraftInService}"
                                         valueColor="Neutral"
                                         size="M"
                                         nullifyValue="false"/>
@@ -149,14 +149,17 @@
                 </HeaderContainer>
                 
                 <!-- Flight Operations -->
-                <Panel headerText="Flight Operations" class="sapUiResponsiveMargin">
+                <Panel headerText="Flight Operations" class="sapUiMediumMargin">
                     <content>
-                        <Table id="flightTable" items="{/flights}">
+                        <Table id="flightTable" items="{/flights}" mode="SingleSelect">
                             <headerToolbar>
                                 <Toolbar>
                                     <SearchField width="300px" search="onSearchFlights"/>
                                     <ToolbarSpacer/>
                                     <Text text="4 flights"/>
+                                    <Button icon="sap-icon://add" text="Add Flight" type="Emphasized" press="onAddFlight"/>
+                                    <Button icon="sap-icon://edit" text="Edit" press="onEditFlight" enabled="{= ${/selectedFlight} !== null}"/>
+                                    <Button icon="sap-icon://delete" text="Cancel" type="Reject" press="onCancelFlight" enabled="{= ${/selectedFlight} !== null}"/>
                                 </Toolbar>
                             </headerToolbar>
                             <columns>
@@ -165,9 +168,10 @@
                                 <Column><Text text="Status"/></Column>
                                 <Column><Text text="Gate"/></Column>
                                 <Column><Text text="Passengers"/></Column>
+                                <Column><Text text="Actions"/></Column>
                             </columns>
                             <items>
-                                <ColumnListItem press="onFlightPress">
+                                <ColumnListItem press="onFlightPress" type="Active">
                                     <cells>
                                         <ObjectIdentifier title="{flightNumber}"/>
                                         <Text text="{origin} → {destination}"/>
@@ -177,6 +181,12 @@
                                         }"/>
                                         <Text text="{gate}"/>
                                         <Text text="{passengerCount}"/>
+                                        <HBox>
+                                            <Button icon="sap-icon://passenger-care" tooltip="Manage Passengers" press="onManagePassengers" class="sapUiTinyMarginEnd" visible="{= ${status} !== 'grounded'}"/>
+                                            <Button icon="sap-icon://timesheet" tooltip="Update Status" press="onUpdateFlightStatus" class="sapUiTinyMarginEnd"/>
+                                            <Button icon="sap-icon://wrench" text="Schedule Maintenance" type="Emphasized" press="onScheduleMaintenanceFromFlight" class="sapUiTinyMarginEnd" visible="{canScheduleMaintenance}"/>
+                                            <Button icon="sap-icon://detail-view" tooltip="Flight Details" press="onFlightDetails"/>
+                                        </HBox>
                                     </cells>
                                 </ColumnListItem>
                             </items>
@@ -185,31 +195,35 @@
                 </Panel>
                 
                 <!-- Flight Demand by Country/Region - AnalyticMap -->
-                <Panel headerText="Flight Demand by Country/Region" class="sapUiResponsiveMargin" height="500px">
+                <Panel headerText="Flight Demand by Country/Region" class="sapUiMediumMargin">
                     <content>
                         <vbm:AnalyticMap
                             id="demandAnalyticMap"
                             initialPosition="0;20;0"
                             initialZoom="2"
                             width="100%"
-                            height="450px">
+                            height="400px"
+                            class="sapUiResponsiveMargin">
                             
                             <!-- Regions aggregation for country-based demand -->
                             <vbm:regions>
                                 <vbm:Region 
                                     code="US"
                                     color="rgba(220,38,38,0.8)"
-                                    tooltip="United States: 91% flight demand increase">
+                                    tooltip="United States: 91% flight demand increase"
+                                    click="onRegionClick">
                                 </vbm:Region>
                                 <vbm:Region 
                                     code="JP"
                                     color="rgba(220,38,38,0.8)"
-                                    tooltip="Japan: 96% flight demand increase">
+                                    tooltip="Japan: 96% flight demand increase"
+                                    click="onRegionClick">
                                 </vbm:Region>
                                 <vbm:Region 
                                     code="SG"
                                     color="rgba(220,38,38,0.8)"
-                                    tooltip="Singapore: 93% flight demand increase">
+                                    tooltip="Singapore: 93% flight demand increase"
+                                    click="onRegionClick">
                                 </vbm:Region>
                                 <vbm:Region 
                                     code="GB"
@@ -305,7 +319,7 @@
                 </Panel>
                 
                 <!-- Country Demand Summary Table -->
-                <Panel headerText="Flight Demand by Country" class="sapUiResponsiveMargin">
+                <Panel headerText="Flight Demand by Country" class="sapUiMediumMargin">
                     <content>
                         <Table items="{/countryDemand}" class="sapUiMediumMargin">
                             <headerToolbar>
@@ -352,7 +366,7 @@
                 </Panel>
                 
                 <!-- Forecast vs Actual Load Factor Analysis -->
-                <Panel headerText="Forecast vs Actual Load Factor Analysis" class="sapUiResponsiveMargin">
+                <Panel id="forecastPanel" headerText="Forecast vs Actual Load Factor Analysis" class="sapUiMediumMargin">
                     <headerToolbar>
                         <Toolbar>
                             <Title text="Forecast vs Actual Load Factor Analysis"/>
@@ -444,13 +458,15 @@
                                         <ScrollContainer 
                                             vertical="false" 
                                             horizontal="true" 
-                                            height="420px" 
+                                            height="400px" 
                                             width="100%"
                                             class="sapUiNoMargin">
-                                            <core:HTML content="{
-                                                path: '/forecastData',
-                                                formatter: '.formatVerticalBarChart'
-                                            }"/>
+                                            <VBox width="100%" alignItems="Center" class="sapUiNoMargin">
+                                                <core:HTML content="{
+                                                    path: '/forecastData',
+                                                    formatter: '.formatVerticalBarChart'
+                                                }"/>
+                                            </VBox>
                                         </ScrollContainer>
                                     </content>
                                 </Panel>
@@ -533,9 +549,17 @@
                         </content>
                     </Panel>
                     
-                    <Panel headerText="Upcoming Maintenance" width="50%">
+                    <Panel headerText="Upcoming Maintenance" width="50%" class="sapUiMediumMarginEnd">
+                        <headerToolbar>
+                            <Toolbar>
+                                <Title text="Upcoming Maintenance"/>
+                                <ToolbarSpacer/>
+                                <Button icon="sap-icon://add" text="Schedule" type="Emphasized" press="onScheduleMaintenance"/>
+                                <Button icon="sap-icon://inspection" text="Inspect" press="onStartInspection"/>
+                            </Toolbar>
+                        </headerToolbar>
                         <content>
-                            <List items="{/maintenanceSchedules}">
+                            <List items="{/maintenanceSchedules}" class="sapUiMediumMargin">
                                 <StandardListItem
                                     title="{aircraft/tailNumber} - {maintenanceType}"
                                     description="{description}"
@@ -544,11 +568,91 @@
                                         formatter: '.formatDate'
                                     }"
                                     icon="sap-icon://wrench"
+                                    type="Active"
                                     press="onMaintenancePress"/>
                             </List>
                         </content>
                     </Panel>
                 </HBox>
+                
+                <!-- Maintenance Analytics Dashboard -->
+                <Panel id="maintenanceAnalyticsPanel" headerText="Maintenance Analytics" class="sapUiMediumMargin">
+                    <headerToolbar>
+                        <Toolbar>
+                            <Title text="Maintenance Analytics"/>
+                            <ToolbarSpacer/>
+                            <Button icon="sap-icon://chart-axis" text="View Trends" press="onViewMaintenanceTrends"/>
+                            <Button icon="sap-icon://expense-report" text="Cost Analysis" press="onViewCostAnalysis"/>
+                        </Toolbar>
+                    </headerToolbar>
+                    <content>
+                        <HBox class="sapUiMediumMargin">
+                            <!-- Cost Summary Cards -->
+                            <VBox width="30%" class="sapUiMediumMarginEnd">
+                                <Title text="Cost Summary" level="H4" class="sapUiSmallMarginBottom"/>
+                                
+                                <GenericTile class="sapUiTinyMarginBottom" frameType="OneByHalf" width="100%" 
+                                    header="Monthly Cost" subheader="Current Month" press="onCostTilePress">
+                                    <tileContent>
+                                        <TileContent>
+                                            <content>
+                                                <NumericContent 
+                                                    value="$127.5K"
+                                                    valueColor="Critical"
+                                                    indicator="Up"
+                                                    size="M"/>
+                                            </content>
+                                        </TileContent>
+                                    </tileContent>
+                                </GenericTile>
+                                
+                                <GenericTile class="sapUiTinyMarginBottom" frameType="OneByHalf" width="100%"
+                                    header="Avg Downtime" subheader="Per Aircraft" press="onDowntimeTilePress">
+                                    <tileContent>
+                                        <TileContent>
+                                            <content>
+                                                <NumericContent 
+                                                    value="24hrs"
+                                                    valueColor="Good"
+                                                    indicator="Down"
+                                                    size="M"/>
+                                            </content>
+                                        </TileContent>
+                                    </tileContent>
+                                </GenericTile>
+                                
+                                <GenericTile frameType="OneByHalf" width="100%"
+                                    header="Parts Inventory" subheader="Stock Level" press="onInventoryTilePress">
+                                    <tileContent>
+                                        <TileContent>
+                                            <content>
+                                                <NumericContent 
+                                                    value="87%"
+                                                    valueColor="Good"
+                                                    size="M"/>
+                                            </content>
+                                        </TileContent>
+                                    </tileContent>
+                                </GenericTile>
+                            </VBox>
+                            
+                            <!-- Interactive Maintenance Chart -->
+                            <VBox width="70%">
+                                <Title text="Maintenance Schedule Timeline" level="H4" class="sapUiSmallMarginBottom"/>
+                                <Panel class="sapUiNoMargin" backgroundDesign="Solid">
+                                    <content>
+                                        <VBox width="100%" alignItems="Center" height="280px" class="sapUiMediumMargin">
+                                            <core:HTML id="maintenanceTimelineHTML" content="{
+                                                path: '/maintenanceSchedules',
+                                                formatter: '.formatMaintenanceTimeline'
+                                            }"/>
+                                        </VBox>
+                                    </content>
+                                </Panel>
+                            </VBox>
+                        </HBox>
+                    </content>
+                </Panel>
                 
             </VBox>
         </content>

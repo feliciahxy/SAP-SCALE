@@ -60,7 +60,11 @@
       }
     },
     "resources": {
-      "css": []
+      "css": [
+        {
+          "uri": "css/joule.css"
+        }
+      ]
     },
     "rootView": {
       "viewName": "skylink.view.App",
